@@ -1,0 +1,111 @@
+version: "3.9"
+
+# Local Atlas cluster:
+#   - 3-node shard controller
+#   - 2 replica groups of 3 nodes each
+#
+# Ports:
+#   ctrler-{1..3}: RPC 9200, metrics 9201 (host-published on 9201/9202/9203)
+#   g1-kv-{1..3}:  RPC 9300, metrics 9301
+#   g2-kv-{1..3}:  RPC 9300, metrics 9301
+#
+# Build context is the repo root so the Dockerfile can `go build` everything.
+
+services:
+  ctrler-1:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: ctrler }
+    command: [
+      "-id=0",
+      "-peers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "ctrler1-data:/var/lib/atlas" ]
+
+  ctrler-2:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: ctrler }
+    command: [
+      "-id=1",
+      "-peers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "ctrler2-data:/var/lib/atlas" ]
+
+  ctrler-3:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: ctrler }
+    command: [
+      "-id=2",
+      "-peers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "ctrler3-data:/var/lib/atlas" ]
+
+  g1-kv-1:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: kv }
+    command: [
+      "-id=0", "-gid=1",
+      "-peers=g1-kv-1:9300,g1-kv-2:9300,g1-kv-3:9300",
+      "-ctrlers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "g1kv1-data:/var/lib/atlas" ]
+
+  g1-kv-2:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: kv }
+    command: [
+      "-id=1", "-gid=1",
+      "-peers=g1-kv-1:9300,g1-kv-2:9300,g1-kv-3:9300",
+      "-ctrlers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "g1kv2-data:/var/lib/atlas" ]
+
+  g1-kv-3:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: kv }
+    command: [
+      "-id=2", "-gid=1",
+      "-peers=g1-kv-1:9300,g1-kv-2:9300,g1-kv-3:9300",
+      "-ctrlers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "g1kv3-data:/var/lib/atlas" ]
+
+  g2-kv-1:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: kv }
+    command: [
+      "-id=0", "-gid=2",
+      "-peers=g2-kv-1:9300,g2-kv-2:9300,g2-kv-3:9300",
+      "-ctrlers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "g2kv1-data:/var/lib/atlas" ]
+
+  g2-kv-2:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: kv }
+    command: [
+      "-id=1", "-gid=2",
+      "-peers=g2-kv-1:9300,g2-kv-2:9300,g2-kv-3:9300",
+      "-ctrlers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "g2kv2-data:/var/lib/atlas" ]
+
+  g2-kv-3:
+    build: { context: .., dockerfile: deploy/Dockerfile, target: kv }
+    command: [
+      "-id=2", "-gid=2",
+      "-peers=g2-kv-1:9300,g2-kv-2:9300,g2-kv-3:9300",
+      "-ctrlers=ctrler-1:9200,ctrler-2:9200,ctrler-3:9200",
+      "-data=/var/lib/atlas",
+    ]
+    volumes: [ "g2kv3-data:/var/lib/atlas" ]
+
+volumes:
+  ctrler1-data:
+  ctrler2-data:
+  ctrler3-data:
+  g1kv1-data:
+  g1kv2-data:
+  g1kv3-data:
+  g2kv1-data:
+  g2kv2-data:
+  g2kv3-data:
