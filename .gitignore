@@ -1,0 +1,38 @@
+# Binaries
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test artefacts
+*.test
+*.out
+coverage.txt
+coverage.html
+
+# Go workspace
+go.work
+go.work.sum
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# LaTeX build artefacts
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc
+docs/*.pdf
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.synctex.gz
+
+# Runtime data
+data/
+snapshots/
+*.log
